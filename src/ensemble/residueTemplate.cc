@@ -104,7 +104,7 @@ void residueTemplate::initializeHasPolarHRotamers()
 			hasPolarHRotamers=true;
 			break;
 		case 18: // Tyr
-			hasPolarHRotamers=true;
+			hasPolarHRotamers=false;
 			break;
 		default: hasPolarHRotamers=false;
 	}
@@ -319,30 +319,6 @@ void residueTemplate::convertAtomTypeStringsToIndices(const StrVec& _strVect)
 #endif
 }
 
-// begin ligand/residue amberElec Code
-
-double residueTemplate::getAmberElecEnergySQ(const int _resType1, const int _atomType1, const double _ligAtomCharge, const double _distanceSquared)
-{
-      if (_resType1 >= 0 && _atomType1 >= 0)
-        {
-            return itsAmberElec.getEnergySQ(UInt(_resType1), UInt(_atomType1), _ligAtomCharge, _distanceSquared);
-        }
-    
-    return 0.0;
-}
-
-double residueTemplate::getAmberElecEnergy(const int _resType1, const int _atomType1, const double _ligAtomCharge, const double _distance)
-{
-    if (_resType1 >= 0 && _atomType1 >= 0)
-    {
-            return itsAmberElec.getEnergy(UInt(_resType1), UInt(_atomType1), _ligAtomCharge, _distance);
-    }
-    
-    return 0.0;
-}
-
-// end ligand/residue amberElec Code
-
 double residueTemplate::getAmberElecEnergy (const int _resType1, const int _atomType1, const int _resType2, const int _atomType2, const double _distance)
 {
 	if (_resType1 >= 0 && _atomType1 >= 0 && _resType2 >= 0 && _atomType2 >= 0)
@@ -387,6 +363,24 @@ double residueTemplate::getVDWRadius(const int _type1)
 	return 0.0;
 }
 
+double residueTemplate::getPolarizability(const int _type1)
+{
+    if( _type1 >= 0)
+    {
+        return itsAmberVDW.getPolarizability(UInt(_type1));
+    }
+    return 0.0;
+}
+
+double residueTemplate::getVolume(const int _type1)
+{
+    if( _type1 >= 0)
+    {
+        return itsAmberVDW.getVolume(UInt(_type1));
+    }
+    return 0.0;
+}
+
 double residueTemplate::getVDWEnergy(const int _type1, const int _type2, const double _distance)
 {
 	if( _type1 >= 0 && _type2 >= 0)
@@ -412,12 +406,36 @@ double residueTemplate::getVDWEnergySQ(const int _type1, const int _type2, const
 	{
 		return itsAmberVDW.getEnergySQ(UInt(_type1), UInt(_type2), _distanceSquared);
 	}
-	return 0.0;
+    else
+    {
+        cout << "VDW types not found in database: " << _type1 << " " << _type2 << endl;
+        return 0.0;
+    }
+
+}
+
+double residueTemplate::getVDWWaterEnergy(const int _type1)
+{
+    if (_type1 >= 0)
+    {
+        return itsAmberVDW.getWaterEnergy(UInt(_type1));
+    }
+    else
+    {
+        cout << "VDW types not found in database: " << _type1 << endl;
+        return 0.0;
+    }
+
 }
 
 double residueTemplate::getAABaselineEnergy(const string& _name)
 {
 	return itsAABaseline.getEnergy(_name);
+}
+
+vector<string> residueTemplate::getAABaselineList()
+{
+	return itsAABaseline.list();
 }
 
 int residueTemplate::getAtomEnergyTypeDefinition(const int _type, const int _field) const

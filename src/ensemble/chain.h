@@ -66,12 +66,14 @@ public:
 	char getChainID() {return itsChainID;}
 	residue* getResidue(UInt _resIndex) { return itsResidues[_resIndex]; }
 	UInt getTypeFromResNum(UInt _resNum) { return itsResidues[_resNum]->getTypeIndex(); }
+    double getRadius(UInt resIndex, UInt atomIndex) {return itsResidues[resIndex]->getRadius(atomIndex);}
 	string getTypeStringFromAtomNum(UInt _resNum, UInt _atomNum) { return itsResidues[_resNum]->getTypeStringFromAtomNum( _atomNum); }
 	string getTypeStringFromResNum(UInt _resNum) {return itsResidues[_resNum]->getType();}
 	double getAtomCharge(UInt _resNum, UInt _atomNum) { return itsResidues[_resNum]->getAtomCharge(_atomNum); }
 	void mutate(const UInt _indexInChain, const UInt _aaType);
 	void mutateWithoutBuffering(const UInt _indexInChain, const UInt _aaType);
-	void fixBrokenResidue(const UInt _indexInChain);
+    void fixBrokenResidue(const UInt _indexInChain);
+    void fixBrokenResidue(const UInt _indexInChain, bool withRotamer);
 	void redoModification(chainModBuffer _redoBuffer);
 	void makeAtomSilent(const UInt _resIndex, const UInt _atomIndex);
 
@@ -114,7 +116,9 @@ public:
 
     void setMoved (UInt resIndex, UInt _moved) {itsResidues[resIndex]->setMoved(_moved);}
     double getSolvationEnergy(const UInt _resIndex) {return itsResidues[_resIndex]->getSolvationEnergy();}
-    double getDielectric(const UInt _resIndex) {return itsResidues[_resIndex]->getDielectric();}
+	double getDielectric(const UInt _resIndex) {return itsResidues[_resIndex]->getDielectric();}
+	double getBetaChi(const UInt _resIndex) {return itsResidues[_resIndex]->getBetaChi();}
+	void setBetaChi(const UInt _resIndex, double _chi) {return itsResidues[_resIndex]->setBetaChi(_chi);}
 	UIntVec getActiveResidues() { return itsRepackActivePositionMap;}
 	void setRotamerNotAllowed (const UInt _indexInChain, const UInt aaType, const UInt _bpt, const UInt _rotamer);
 	UIntVec getAllowedRotamers ( const UInt _indexInChain, const UInt  _aaType, const UInt _bpt);
